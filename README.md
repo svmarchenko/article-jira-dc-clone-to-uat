@@ -47,33 +47,3 @@ For a different environment, the scripts will most likely need adjustments.
 ├── jconfig.env.example
 └── startclone.sh
 ```
-
-## Prerequisites
-
-1. SSH key-based access from Jira UAT to Jira PROD and to DB UAT, with no interactive password prompts
-2. A `syncuser` account on DB UAT
-3. A Personal Access Token (PAT) of a service user, used to check Jira readiness and trigger reindexing
-4. Network access: SSH (22) and PostgreSQL (`6432`) between the hosts
-5. A filled-in `jconfig.env` (copy it from `jconfig.env.example`)
-6. An already configured test Jira. If you don't have one, skip the reconfiguration scripts and adjust the settings manually on the first run
-
-## Usage
-
-Run on Jira UAT as `root`:
-
-```bash
-cp jconfig.env.example jconfig.env
-# fill in jconfig.env
-./startclone.sh
-```
-
-Helper scripts should not be run manually. To repeat a step, delete its checkpoint `completed/<script_name>.sh.done` and run `startclone.sh` again.
-
-## Important
-
-- **Review the scripts before running them.** Some steps may be critical for your environment (replacing the database, deleting data, changing the owner).
-- The scripts drop and recreate the Jira database on DB UAT. Run them against a test server only.
-- Not all variables are moved to `jconfig.env`; some values need to be checked directly in the scripts.
-- Because PROD is not stopped, differences accumulate between the start and the end of synchronization. `rsync` errors 23 and 24 are ignored for this reason.
-- Do not commit tokens or passwords to the repository.
-
